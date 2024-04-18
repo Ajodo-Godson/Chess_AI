@@ -7,7 +7,7 @@ piece_value = {
     chess.BISHOP: 330,
     chess.ROOK: 500,
     chess.QUEEN: 900,
-    chess.KING: 0
+    chess.KING: 20000
 }
 
 #-------------------------------------------------------------------------------------------------------------------#
@@ -310,6 +310,8 @@ def move_value(board: chess.Board, move: chess.Move, endgame: bool) -> float:
         total_move_value = -total_move_value
 
     return total_move_value
+
+
 def evaluate_board(board: chess.Board) -> float:
     total_evaluation = 0
     end_game = check_end_game(board)

@@ -10,7 +10,7 @@ piece_value = {
     chess.KING: 20000
 }
 
-pawnEvalWhite = [
+p_white = [
     0,  0,  0,  0,  0,  0,  0,  0,
     50, 50, 50, 50, 50, 50, 50, 50,
     10, 10, 20, 30, 30, 20, 10, 10,
@@ -20,7 +20,7 @@ pawnEvalWhite = [
     5, 10, 10, -20, -20, 10, 10,  5,
     0, 0, 0, 0, 0, 0, 0, 0
 ]
-pawnEvalBlack = list(reversed(pawnEvalWhite))
+p_Black = list(reversed(p_white))
 
 knightEval = [
     -50,-40,-30,-30,-30,-30,-40,-50,
@@ -33,7 +33,7 @@ knightEval = [
     -50,-40,-30,-30,-30,-30,-40,-50,
 ]
 
-bishopEvalWhite = [
+b_white = [
     -20,-10,-10,-10,-10,-10,-10,-20,
     -10,  0,  0,  0,  0,  0,  0,-10,
     -10,  0,  5, 10, 10,  5,  0,-10,
@@ -43,9 +43,9 @@ bishopEvalWhite = [
     -10,  5,  0,  0,  0,  0,  5,-10,
     -20,-10,-10,-10,-10,-10,-10,-20,
 ]
-bishopEvalBlack = list(reversed(bishopEvalWhite))
+b_Black = list(reversed(b_white))
 
-rookEvalWhite = [
+r_white = [
     0,  0,  0,  0,  0,  0,  0,  0,
     5, 10, 10, 10, 10, 10, 10,  5,
     -5,  0,  0,  0,  0,  0,  0, -5,
@@ -55,7 +55,7 @@ rookEvalWhite = [
     -5,  0,  0,  0,  0,  0,  0, -5,
     0,  0,  0,  5,  5,  0,  0,  0
 ]
-rookEvalBlack = list(reversed(rookEvalWhite))
+r_Black = list(reversed(r_white))
 
 queenEval = [
     -20,-10,-10, -5, -5,-10,-10,-20,
@@ -136,13 +136,13 @@ def evaluate_piece(piece: chess.Piece, square: chess.Square, end_game: bool) -> 
     # Positional value adjustment based on piece type and square
     positional_value = 0
     if piece_type == chess.PAWN:
-        positional_value = pawnEvalWhite[square] if color == chess.WHITE else pawnEvalBlack[square]
+        positional_value = p_white[square] if color == chess.WHITE else p_Black[square]
     elif piece_type == chess.KNIGHT:
         positional_value = knightEval[square]
     elif piece_type == chess.BISHOP:
-        positional_value = bishopEvalWhite[square] if color == chess.WHITE else bishopEvalBlack[square]
+        positional_value = b_white[square] if color == chess.WHITE else b_Black[square]
     elif piece_type == chess.ROOK:
-        positional_value = rookEvalWhite[square] if color == chess.WHITE else rookEvalBlack[square]
+        positional_value = r_white[square] if color == chess.WHITE else r_Black[square]
     elif piece_type == chess.QUEEN:
         positional_value = queenEval[square]
     elif piece_type == chess.KING:
@@ -221,6 +221,9 @@ def move_value(board: chess.Board, move: chess.Move, endgame: bool) -> float:
         total_move_value = -total_move_value
 
     return total_move_value
+
+
+
 def evaluate_board(board: chess.Board) -> float:
     total_evaluation = 0
     end_game = check_end_game(board)

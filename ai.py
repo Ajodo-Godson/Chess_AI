@@ -2,16 +2,40 @@ from typing import Dict, List, Any
 import chess
 import time
 import chess.polyglot
-import os
+import os, random
 #from evaluation import move_value, check_end_game, evaluate_board
 from evaluation2 import *
+#from evaluation import *
 # Global definition of debug_info
 debug_info = {"nodes": 0, "white_time": 0, "black_time":0, "book_move": None}
 
 
 MATE_SCORE = 1000000000
 MATE_THRESHOLD = 999000000
+class ZOBRIST:
+    def __init__(self):
+        self.zobrist_table = self.init_zobrist_table()
 
+    def init_zobrist_table(self):
+        zobrist = []
+        for _ in range(64):  # For each square on the chessboard
+            row = []
+            for _ in range(12):  # For each piece type and color (6 pieces * 2 colors)
+                row.append(random.randrange(2**64))
+            zobrist.append(row)
+        return zobrist
+
+    def zobrist_hash(self, board):
+        hash_val = 0
+        for square in chess.SQUARES:
+            piece = board.piece_at(square)
+            if piece:
+                piece_index = piece.piece_type - 1 + (6 if piece.color == chess.BLACK else 0)
+                hash_val ^= self.zobrist_table[square][piece_index]
+        return hash_val
+    
+ai_instance = ZOBRIST()
+memo = {}
 def next_move(depth: int, board: chess.Board, debug=True, book_path='Resources/gm2600.bin') -> chess.Move:
     """
     Determine the next best move, including using opening book moves if available.
@@ -73,6 +97,27 @@ def get_ordered_moves(board: chess.Board) -> List[chess.Move]:
 #                 alpha = score
 #     return alpha
 
+# def quiescence_search(board: chess.Board, alpha: float, beta: float):
+#     stand_pat = evaluate_board(board)
+#     if stand_pat >= beta:
+#         return beta
+#     if alpha < stand_pat:
+#         alpha = stand_pat
+
+#     for move in board.legal_moves:
+#         if board.is_capture(move) or board.gives_check(move):  # Limit to captures and checks
+#             board.push(move)
+#             score = -quiescence_search(board, -beta, -alpha)
+#             board.pop()
+
+#             if score >= beta:
+#                 return beta
+#             if score > alpha:
+#                 alpha = score
+
+#     return alpha
+
+
 def minimax_root(depth: int, board: chess.Board) -> chess.Move:
     """
     Root of the minimax algorithm to explore move possibilities.
@@ -83,7 +128,7 @@ def minimax_root(depth: int, board: chess.Board) -> chess.Move:
 
     for move in get_ordered_moves(board):
         board.push(move)
-        value = alpha_beta(depth - 1, board, -float("inf"), float("inf"), not maximize)
+        value = alpha_beta(ai_instance, depth-1, board, -float("inf"), float("inf"), not maximize)
         board.pop()
         
         if (maximize and value > best_move) or (not maximize and value < best_move):
@@ -92,30 +137,41 @@ def minimax_root(depth: int, board: chess.Board) -> chess.Move:
 
     return best_move_found
 
-def alpha_beta(depth: int, board: chess.Board, alpha: float, beta: float, is_maximising_player: bool) -> float:
-    """
-    The minimax algorithm with alpha-beta pruning.
-    """
+def alpha_beta(ai_instance, depth: int, board: chess.Board, alpha: float, beta: float, is_maximising_player: bool) -> float:
     global debug_info
     debug_info['nodes'] += 1  # Increment node counter
-    if depth == 0:
-        return evaluate_board(board)
+
+    # Generate the Zobrist hash key for the current board state
+    zobrist_key = ai_instance.zobrist_hash(board)
+
+    # Memoization: Check if the current board state has been evaluated before
+    if (zobrist_key, depth, is_maximising_player) in memo:
+        return memo[(zobrist_key, depth, is_maximising_player)]
+
+    if depth == 0 or board.is_game_over():
+        eval_value = evaluate_board(board)
+        memo[(zobrist_key, depth, is_maximising_player)] = eval_value
+        return eval_value
+
     if board.is_checkmate():
         return -MATE_SCORE if is_maximising_player else MATE_SCORE
-    elif board.is_game_over():
-        return 0
 
-    optimal_value = -float("inf") if is_maximising_player else float("inf")
+    optimal_value = -float('inf') if is_maximising_player else float('inf')
     for move in get_ordered_moves(board):
         board.push(move)
-        current_value = alpha_beta(depth - 1, board, alpha, beta, not is_maximising_player)
+        current_value = alpha_beta(ai_instance, depth - 1, board, alpha, beta, not is_maximising_player)
         board.pop()
+
         if is_maximising_player:
             optimal_value = max(optimal_value, current_value)
             alpha = max(alpha, optimal_value)
         else:
             optimal_value = min(optimal_value, current_value)
             beta = min(beta, optimal_value)
+
         if beta <= alpha:
             break
+
+    memo[(zobrist_key, depth, is_maximising_player)] = optimal_value
     return optimal_value
+

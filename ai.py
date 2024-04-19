@@ -3,12 +3,11 @@ import chess
 import time
 import chess.polyglot
 import os, random
-from evaluation import *
+from evaluation import mvv_lva, check_end_game, evaluate_board
 # Global definition of debug_info
 debug_info = {"nodes": 0, "white_time": 0, "black_time":0, "book_move": None}
 
-
-MATE_SCORE = 1000000000
+MATE_SCORE = 1000000007
 MATE_THRESHOLD = 999000000
 class ZOBRIST:
     def __init__(self):
@@ -73,7 +72,7 @@ def get_ordered_moves(board: chess.Board) -> List[chess.Move]:
     Get legal moves ordered by heuristic value to improve minimax efficiency.
     """
     end_game = check_end_game(board)
-    return sorted(board.legal_moves, key=lambda move: move_value(board, move, end_game),
+    return sorted(board.legal_moves, key=lambda move: mvv_lva(board, move, end_game),
                   reverse=board.turn == chess.WHITE)
 
 # def quiescence_search(board, alpha, beta):

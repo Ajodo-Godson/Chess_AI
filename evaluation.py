@@ -350,7 +350,7 @@ def evaluate_positional_change(board: chess.Board, move: chess.Move, endgame: bo
 
     board.pop()  # Undo the move to restore the board state
     return new_position_value - old_position_value
-def move_value(board: chess.Board, move: chess.Move, endgame: bool) -> float:
+def mvv_lva(board: chess.Board, move: chess.Move, endgame: bool) -> float:
     board.push(move)  # Make the move on the board
     board.pop()  # Undo the move
 

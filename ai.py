@@ -3,9 +3,7 @@ import chess
 import time
 import chess.polyglot
 import os, random
-#from evaluation import move_value, check_end_game, evaluate_board
-from evaluation2 import *
-#from evaluation import *
+from evaluation import *
 # Global definition of debug_info
 debug_info = {"nodes": 0, "white_time": 0, "black_time":0, "book_move": None}
 

@@ -6,8 +6,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QPushButton, QLa
 from PyQt5.QtSvg import QSvgWidget
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QMouseEvent
-#from evaluation import *
-from evaluation2 import *
+from evaluation import *
 from ai import *
 import time
 book_path = 'Resources/gm2600.bin'

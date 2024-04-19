@@ -228,7 +228,7 @@ def evaluate_piece(piece: chess.Piece, square: chess.Square, end_game: bool) -> 
             positional_value = eg_whitequeen_table[square] if color == chess.WHITE else eg_blackqueen_table[square]
         else:
             positional_value = mg_whitequeen_table[square] if color == chess.WHITE else mg_blackqueen_table[square]
-        #positional_value = queenEval[square]
+        
     elif piece_type == chess.KING:
         if end_game:
             positional_value = eg_whiteking_table[square] if color == chess.WHITE else eg_blackking_table[square]
@@ -282,6 +282,7 @@ def evaluate_positional_change(board: chess.Board, move: chess.Move, endgame: bo
 
     board.pop()  # Undo the move to restore the board state
     return new_position_value - old_position_value
+
 def mvv_lva(board: chess.Board, move: chess.Move, endgame: bool) -> float:
     board.push(move)  # Make the move on the board
     board.pop()  # Undo the move

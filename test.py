@@ -1,6 +1,6 @@
 
 import chess
-from evaluation2 import *
+from evaluation import *
 # Call the function to initialize tables and evaluate the board
 
 

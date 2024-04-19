@@ -2,7 +2,7 @@ import sys
 import chess
 import chess.svg
 import chess.pgn
-from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QPushButton, QLabel, QSpinBox
+from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox, QPushButton, QLabel, QSpinBox, QComboBox
 from PyQt5.QtSvg import QSvgWidget
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QMouseEvent
@@ -35,11 +35,10 @@ class ChessGUI(QWidget):
         #Select depth to play: 
         self.depthLabel = QLabel('Select Depth to Play', self)
         self.depthLabel.move(520, 30)
-        self.depthSpinBox = QSpinBox(self)
-        self.depthSpinBox.setRange(1, 10)  # Let users choose depth between 1 and 10
-        self.depthSpinBox.setValue(3)  # Default depth set to 3
-        self.depthSpinBox.setFixedSize(100, 30)
-        self.depthSpinBox.move(520, 50)
+        self.depthComboBox = QComboBox(self)
+        self.depthComboBox.addItems([str(i) for i in range(1, 11)])  # Adding depth options 1 to 10
+        self.depthComboBox.setFixedSize(100, 30)
+        self.depthComboBox.move(520, 50)
 
         # Select AI color
         self.move_from_square = None
@@ -176,14 +175,14 @@ class ChessGUI(QWidget):
         else:
             winner = "White"
         QMessageBox.information(self, "Game Over", f"{winner} wins by resignation")
-        # Reset the board or disable moves
+        # Reset the board
         self.board.reset()
         self.update_board()  
 
     def handle_claim_draw(self):
-        # You might want to check for valid draw conditions here
+        
         QMessageBox.information(self, "Game Over", "Draw claimed")
-        # Reset the board or disable moves
+        # Reset the board 
         self.board.reset()
         self.update_board()
 
@@ -208,7 +207,7 @@ class ChessGUI(QWidget):
         """Sets the AI's color and triggers a move if it's AI's turn."""
         self.ai_color = color
         if self.board.turn == self.ai_color:
-            QTimer.singleShot(100, self.ai_move)  # Trigger AI move if it's AI's turn
+            QTimer.singleShot(100, self.ai_move)  #
 
     
     def iterative_deepening_search(self, max_depth):
@@ -229,8 +228,8 @@ class ChessGUI(QWidget):
 
         if not self.board.is_game_over():
             start_time = time.time()
-            # Get the selected depth from the QSpinBox
-            selected_depth = self.depthSpinBox.value()
+            # Get the selected depth from the Qcombobox
+            selected_depth = int(self.depthComboBox.currentText())
 
             # First, try to get a book move
             book_move = get_book_move(self.board, book_path)

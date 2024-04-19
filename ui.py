@@ -22,7 +22,7 @@ class ChessGUI(QWidget):
 
     def initUI(self):
         self.setGeometry(100, 100, 520, 520)
-        self.setWindowTitle('Chess AI with GUI')
+        self.setWindowTitle('Chess AI')
         self.board = chess.Board()
         self.svgWidget = QSvgWidget(parent=self)
         self.svgWidget.setGeometry(10, 10, 500, 500)
@@ -46,7 +46,7 @@ class ChessGUI(QWidget):
         self.legal_moves = []
         self.whiteButton = QPushButton('AI Plays White', self)
         self.whiteButton.clicked.connect(lambda: self.set_ai_color(chess.WHITE))
-        self.whiteButton.move(520, 100)  # Adjust position as needed
+        self.whiteButton.move(520, 100)  
         
         self.blackButton = QPushButton('AI Plays Black', self)
         self.blackButton.clicked.connect(lambda: self.set_ai_color(chess.BLACK))
@@ -56,12 +56,12 @@ class ChessGUI(QWidget):
         # Resign Button
         self.resignButton = QPushButton('Resign', self)
         self.resignButton.clicked.connect(self.handle_resign)
-        self.resignButton.move(520, 250)  # Adjust position as needed
+        self.resignButton.move(520, 250)  
 
         # Claim Draw Button
         self.claimDrawButton = QPushButton('Claim Draw', self)
         self.claimDrawButton.clicked.connect(self.handle_claim_draw)
-        self.claimDrawButton.move(520, 300)  # Adjust position as needed
+        self.claimDrawButton.move(520, 300)  
 
         #Counter
         self.movesLabel = QLabel('Moves: 0', self)
@@ -96,7 +96,7 @@ class ChessGUI(QWidget):
                 node = node.add_variation(move)
             else:
                 print(f"Illegal move {move} in position {temp_board.fen()}")
-                break  # Break on illegal move, but in a real application, handle as needed
+                break  # Break on illegal move
 
         # Convert the game object to a PGN string
         exporter = chess.pgn.StringExporter(headers=True, variations=True, comments=False)
